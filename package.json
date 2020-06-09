@@ -7,7 +7,7 @@
     "url": "git+ssh://git@github.com/nuclearpasta/react-native-drax.git"
   },
   "main": "src/index.ts",
-  "types": "src/types.ts",
+  "types": "src/index.ts",
   "scripts": {
     "build": "tsc",
     "prepublish": "yarn build"
