@@ -362,6 +362,7 @@ export const DraxList = <T extends unknown>(
 	const resetShifts = useCallback(
 		() => {
 			shiftsRef.current.forEach((shift) => {
+				shift.targetValue = 0;
 				shift.animatedValue.setValue(0);
 			});
 		},
