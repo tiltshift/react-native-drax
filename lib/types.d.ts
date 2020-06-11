@@ -493,6 +493,7 @@ export interface AnimatedViewRefType {
 export interface DraxViewMeasurementHandler {
     (measurements: DraxViewMeasurements | undefined): void;
 }
+export declare type AnimatedViewStylePropWithoutPositionSizeTransform = Omit<AnimatedViewStyleProp, 'margin' | 'marginHorizontal' | 'marginVertical' | 'marginLeft' | 'marginRight' | 'marginTop' | 'marginBottom' | 'marginStart' | 'marginEnd' | 'left' | 'right' | 'top' | 'bottom' | 'flex' | 'flexBasis' | 'flexDirection' | 'flexGrow' | 'flexShrink' | 'transform'>;
 /** Style-related props for a Drax view */
 export interface DraxViewStyleProps {
     /** Custom style prop to allow animated values */
@@ -508,15 +509,15 @@ export interface DraxViewStyleProps {
     /** Additional view style applied while this view has just been released from a drag */
     dragReleasedStyle?: AnimatedViewStyleProp;
     /** Additional view style applied to the hovering copy of this view during drag/release */
-    hoverStyle?: AnimatedViewStyleProp;
+    hoverStyle?: AnimatedViewStylePropWithoutPositionSizeTransform;
     /** Additional view style applied to the hovering copy of this view while dragging */
-    hoverDraggingStyle?: AnimatedViewStyleProp;
+    hoverDraggingStyle?: AnimatedViewStylePropWithoutPositionSizeTransform;
     /** Additional view style applied to the hovering copy of this view while dragging over a receiver */
-    hoverDraggingWithReceiverStyle?: AnimatedViewStyleProp;
+    hoverDraggingWithReceiverStyle?: AnimatedViewStylePropWithoutPositionSizeTransform;
     /** Additional view style applied to the hovering copy of this view while dragging NOT over a receiver */
-    hoverDraggingWithoutReceiverStyle?: AnimatedViewStyleProp;
+    hoverDraggingWithoutReceiverStyle?: AnimatedViewStylePropWithoutPositionSizeTransform;
     /** Additional view style applied to the hovering copy of this view when just released */
-    hoverDragReleasedStyle?: AnimatedViewStyleProp;
+    hoverDragReleasedStyle?: AnimatedViewStylePropWithoutPositionSizeTransform;
     /** Additional view style applied while this view is not receiving a drag */
     receiverInactiveStyle?: AnimatedViewStyleProp;
     /** Additional view style applied while this view is receiving a drag */
@@ -608,6 +609,8 @@ export interface DraxListOnItemReorder<TItem> {
 export interface DraxListProps<TItem> extends Omit<FlatListProps<TItem>, 'renderItem'>, DraxAutoScrollProps {
     /** Unique drax view id, auto-generated if omitted */
     id?: string;
+    /** Styles that go on the view wrapping the FlatList component */
+    wrapperStyles: StyleProp<ViewStyle>;
     /** Style props to apply to all DraxView items in the list */
     itemStyles?: DraxViewStyleProps;
     /** Render function for content of an item's DraxView */
