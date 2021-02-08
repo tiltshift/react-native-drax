@@ -116,8 +116,9 @@ export const DraxList = <T extends unknown>(
 	// Maintain cache of reordered list indexes until data updates.
 	const [originalIndexes, setOriginalIndexes] = useState<number[]>([]);
 
-	// Maintain the index the item is currently dragged to
-	const draggedToIndex = useRef<number | undefined>(undefined);
+
+	// Maintain the toPayload the item is currently dragged to
+	const curToPayload = useRef<ListItemPayload | undefined>(undefined)
 
 	// Adjust measurements and shift value arrays as item count changes.
 	useEffect(
@@ -470,9 +471,7 @@ export const DraxList = <T extends unknown>(
 				const fromPayload = dragged && (dragged.parentId === id)
 					? (dragged.payload as ListItemPayload)
 					: undefined;
-				const toPayload = (fromPayload !== undefined && receiver && receiver.parentId === id)
-					? (receiver.payload as ListItemPayload)
-					: undefined;
+				const toPayload = curToPayload.current || ((fromPayload !== undefined && receiver && receiver.parentId === id) ? (receiver.payload as ListItemPayload) : undefined);
 
 				if (fromPayload !== undefined) {
 					// If dragged item was ours, reset shifts.
@@ -515,9 +514,17 @@ export const DraxList = <T extends unknown>(
 
 	// Monitor drags to react with item shifts and auto-scrolling.
 	const onMonitorDragOver = useCallback(
-		({ dragged, receiver, monitorOffsetRatio }: DraxMonitorEventData) => {
+		({
+			dragged,
+			receiver,
+			monitorOffsetRatio,
+			dragAbsolutePosition
+		}: DraxMonitorEventData) => {
+			// Only update things if we are dragging within the list itself, otherwise leave things alone
+			const dragIsWithinList = contentSizeRef.current && dragAbsolutePosition.y < contentSizeRef.current.y && dragAbsolutePosition.y > 0 && dragAbsolutePosition.x < contentSizeRef.current.x && dragAbsolutePosition.x > 0;
+
 			// First, check if we need to shift items.
-			if (reorderable && dragged.parentId === id) {
+			if (reorderable && dragged.parentId === id && dragIsWithinList) {
 				// One of our list items is being dragged.
 				const fromPayload: ListItemPayload = dragged.payload;
 				// Find its current index in the list for the purpose of shifting.
@@ -525,13 +532,13 @@ export const DraxList = <T extends unknown>(
 					? receiver.payload
 					: fromPayload;
 
-				if (draggedToIndex.current !== undefined
-					&& toPayload.index !== draggedToIndex.current
+				if (curToPayload.current !== undefined
+					&& toPayload.index !== curToPayload.current.index
 					&& onDragPositionChanged) {
 					onDragPositionChanged(toPayload.index);
 				}
 
-				draggedToIndex.current = toPayload.index;
+				curToPayload.current = toPayload;
 				updateShifts(fromPayload, toPayload);
 			}
 
