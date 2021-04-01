@@ -521,7 +521,11 @@ export const DraxList = <T extends unknown>(
 			dragAbsolutePosition
 		}: DraxMonitorEventData) => {
 			// Only update things if we are dragging within the list itself, otherwise leave things alone
-			const dragIsWithinList = contentSizeRef.current && dragAbsolutePosition.y < contentSizeRef.current.y && dragAbsolutePosition.y > 0 && dragAbsolutePosition.x < contentSizeRef.current.x && dragAbsolutePosition.x > 0;
+			const left = containerMeasurementsRef.current!.x || 0
+			const top  = containerMeasurementsRef.current!.y || 0
+			const right = left + contentSizeRef.current!.x || 0
+			const bottom = top + contentSizeRef.current!.y || 0
+			const dragIsWithinList = dragAbsolutePosition.y <= bottom && dragAbsolutePosition.y >= top && dragAbsolutePosition.x <= right && dragAbsolutePosition.x >= left;
 
 			// First, check if we need to shift items.
 			if (reorderable && dragged.parentId === id && dragIsWithinList) {
