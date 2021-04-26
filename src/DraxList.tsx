@@ -49,7 +49,7 @@ interface ListItemPayload {
 type DraxListComponentProps<T extends any> = PropsWithChildren<
 	DraxListProps<T>
 >;
-type FlatListRefType = React.Ref<FlatList>;
+type FlatListRefType = React.Ref<FlatList<any>>;
 
 const defaultStyles = StyleSheet.create({
 	draggingStyle: { opacity: 0 },
@@ -659,4 +659,4 @@ const DraxListComponent = <T extends any>(
 
 export const DraxList = React.forwardRef(DraxListComponent) as <T extends any>(
 	p: DraxListComponentProps<T> & { ref?: FlatListRefType }
-) => React.ReactNode;
+) => React.ReactElement | null;
