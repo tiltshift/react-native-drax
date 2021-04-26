@@ -72,7 +72,7 @@ const DraxListComponent = <T extends any>(
 		onDragEnd,
 		...props
 	}: PropsWithChildren<DraxListProps<T>>,
-	flatListRef: FlatListRefType
+	forwardedRef: FlatListRefType
 ) => {
 	// Copy the value of the horizontal property for internal use.
 	const { horizontal = false } = props;
@@ -85,6 +85,9 @@ const DraxListComponent = <T extends any>(
 
 	// The unique identifer for this list's Drax view, initialized below.
 	const id = useDraxId(idProp);
+
+	// FlatList, used for scrolling.
+	const flatListRef = useRef<FlatList<T> | null>(null);
 
 	// FlatList node handle, used for measuring children.
 	const nodeHandleRef = useRef<number | null>(null);
@@ -268,12 +271,20 @@ const DraxListComponent = <T extends any>(
 
 	// Set FlatList and node handle refs.
 	const setFlatListRefs = useCallback(
-		(ref) => {
-			// @ts-ignore
-			flatListRef.current = ref;
-			nodeHandleRef.current = ref && findNodeHandle(ref);
+		(node) => {
+			flatListRef.current = node;
+
+			if (typeof forwardedRef === "function") {
+				forwardedRef(node);
+			} else if (forwardedRef) {
+				(forwardedRef as React.MutableRefObject<
+					FlatList<T>
+				>).current = node;
+			}
+
+			nodeHandleRef.current = node && findNodeHandle(node);
 		},
-		[flatListRef]
+		[forwardedRef]
 	);
 
 	// Update tracked scroll position when list is scrolled.
@@ -288,7 +299,6 @@ const DraxListComponent = <T extends any>(
 
 	// Handle auto-scrolling on interval.
 	const doScroll = useCallback(() => {
-		// @ts-ignore
 		const flatList = flatListRef.current;
 		const containerMeasurements = containerMeasurementsRef.current;
 		const contentSize = contentSizeRef.current;
