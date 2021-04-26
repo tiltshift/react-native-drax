@@ -267,10 +267,14 @@ const DraxListComponent = <T extends any>(
 	}, []);
 
 	// Set FlatList and node handle refs.
-	const setFlatListRefs = useCallback((ref) => {
-		flatListRef.current = ref;
-		nodeHandleRef.current = ref && findNodeHandle(ref);
-	}, []);
+	const setFlatListRefs = useCallback(
+		(ref) => {
+			// @ts-ignore
+			flatListRef.current = ref;
+			nodeHandleRef.current = ref && findNodeHandle(ref);
+		},
+		[flatListRef]
+	);
 
 	// Update tracked scroll position when list is scrolled.
 	const onScroll = useCallback(
@@ -284,6 +288,7 @@ const DraxListComponent = <T extends any>(
 
 	// Handle auto-scrolling on interval.
 	const doScroll = useCallback(() => {
+		// @ts-ignore
 		const flatList = flatListRef.current;
 		const containerMeasurements = containerMeasurementsRef.current;
 		const contentSize = contentSizeRef.current;
