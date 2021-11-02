@@ -221,16 +221,14 @@ const DraxListComponent = <T extends any>(
 					onDragDrop={resetDraggedItem}
 					onMeasure={(measurements) => {
 						// console.log(`measuring [${index}, ${originalIndex}]: (${measurements?.x}, ${measurements?.y})`);
-						itemMeasurementsRef.current[
-							originalIndex
-						] = measurements;
+						itemMeasurementsRef.current[originalIndex] =
+							measurements;
 					}}
 					registration={(registration) => {
 						if (registration) {
 							// console.log(`registering [${index}, ${originalIndex}], ${registration.id}`);
-							registrationsRef.current[
-								originalIndex
-							] = registration;
+							registrationsRef.current[originalIndex] =
+								registration;
 							registration.measure();
 						}
 					}}
@@ -277,9 +275,8 @@ const DraxListComponent = <T extends any>(
 			if (typeof forwardedRef === "function") {
 				forwardedRef(node);
 			} else if (forwardedRef) {
-				(forwardedRef as React.MutableRefObject<
-					FlatList<T>
-				>).current = node;
+				(forwardedRef as React.MutableRefObject<FlatList<T>>).current =
+					node;
 			}
 
 			nodeHandleRef.current = node && findNodeHandle(node);
@@ -580,11 +577,12 @@ const DraxListComponent = <T extends any>(
 				// One of our list items is being dragged.
 				const fromPayload: ListItemPayload = dragged.payload;
 				// Find its current index in the list for the purpose of shifting.
-				const toPayload: ListItemPayload =
+				const toPayload: ListItemPayload | undefined =
 					receiver?.parentId === id ? receiver.payload : fromPayload;
 
 				if (
 					curToPayload.current !== undefined &&
+					toPayload &&
 					toPayload.index !== curToPayload.current.index &&
 					onDragPositionChanged
 				) {
@@ -592,7 +590,7 @@ const DraxListComponent = <T extends any>(
 				}
 
 				curToPayload.current = toPayload;
-				updateShifts(fromPayload, toPayload);
+				if (toPayload) updateShifts(fromPayload, toPayload);
 			}
 
 			// Next, see if we need to auto-scroll.
